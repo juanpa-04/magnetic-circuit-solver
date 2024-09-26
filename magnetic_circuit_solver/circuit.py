@@ -16,6 +16,6 @@ class Circuit():
     SF: float
     a: float
     b: float
-    solve_I1: bool = True
+    solve_for_I2: bool = True
     fringing: bool = False
     fringe: int = 0
