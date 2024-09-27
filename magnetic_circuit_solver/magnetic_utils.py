@@ -2,27 +2,38 @@ import constants as cons
 
 def H(B_field: float, a: float, b: float) -> float:
     """Calcula H apartir de B, a, b"""
-    H = B_field/(a-b*B_field)
-    return H
+    try:
+        return B_field/(a-b*B_field)
+    except:
+        return 0
 
 def B_curve(H_field: float, a:float, b:float) -> float:
-    B = (a*H_field)/(1+b*H_field)
-    return B
+    try:
+       return (a*H_field)/(1+b*H_field)
+    except:
+        return 0
+
 
 def H_vacuum(B_field: float) -> float:
     """Calcula H en el vacio"""
-    H = B_field/cons.PERMEABILITY_VACUUM
-    return H
+    try:  
+        return B_field/cons.PERMEABILITY_VACUUM
+    except:
+        return 0
 
-def B_vacuum(flux: float, w: float, d:float, lg: float, percent_inc: float = None) -> float:
+def B_vacuum(flux: float, SC: float, A:float, lg: float, percent_inc: float = None) -> float:
     """Calcula B tomando en cuenta el area efectiva"""
 
-    effective_area = (w + lg)*(d + lg)
-    if(percent_inc):
-        effective_area = (w*d*(1 + percent_inc/100))
+    try:
+        w = SC/A
+
+        effective_area = (w + lg)*(A + lg)
+        if percent_inc != None :
+            effective_area = (w*A*(1 + percent_inc/100))
+        return flux/effective_area
     
-    
-    return flux/effective_area
+    except:
+        return 0
 
 
 def B(flux: float, cross_section: float, sf: float = 1) -> float:
@@ -37,10 +48,13 @@ def approx_froelich_constants(hb25: tuple, hb90: tuple) -> tuple:
     h25, b25 = hb25
     h90, b90 = hb90
 
-    x = (b25*h25)/(h90*b90)
+    try:
+        x = (b25*h25)/(h90*b90)
 
-    a = (b25-x*b90)/(h25 - x*h90)
-    b = (a*h90 - b90)/(h90*b90)
+        a = (b25-x*b90)/(h25 - x*h90)
+        b = (a*h90 - b90)/(h90*b90)
+    except:
+        return (0,0)
 
     return (a, b)
 
