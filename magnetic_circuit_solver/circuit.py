@@ -13,9 +13,9 @@ class Circuit():
     L3: float
     LE: float
     OE: float
+    A: float
     SF: float
     a: float
     b: float
     solve_for_I2: bool = True
-    fringing: bool = False
-    fringe: int = 0
+    fringe: int = None
