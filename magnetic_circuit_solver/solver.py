@@ -7,14 +7,13 @@ class Solver:
         self.__circuit = circuit
         self.__logging = logging
         self.__log_line_number = 1
-        self.__fringing = circuit.fringing
 
     def solve(self) -> float:
         
         # Calcular La Fmm de la columna central
         Bc = self.__find_flux(self.__circuit.OE, self.__circuit.SC, self.__circuit.SF, "Bc")
         Hc = self.__find_mag_intensity(Bc,"Hc") # Columa central
-        Be = self.__find_flux_vacuum(self.__circuit.OE, self.__)
+        Be = self.__find_flux_vacuum(self.__circuit.OE, "Be", self.__circuit.fringe)
         He = self.__find_mag_intensity(Be, name="He", vacuum=True) # Entrehierro
         Fmm_ce = self.__find_fmm_column(Hc, He, "Fce")
 
@@ -25,13 +24,15 @@ class Solver:
         Bx = self.__find_flux_curve(Hx, bx_name)
 
         # Calcular flujos en las ramas
-        Ox, Ox2 = self.__calc_branch_flux(Bx)
+        Oxtuple, Ox2tuple = self.__calc_branch_flux(Bx)
+        Ox, Ox_name = Oxtuple
+        Ox2, Ox2_name = Ox2tuple
 
         # Calcular Corriente
-        self.__solve__current(Ox2, Fmm_ce)
+        Ituple = self.__solve__current(Ox2, Fmm_ce)
 
 
-        return 1
+        return (Oxtuple, Ox2tuple, Ituple)
     
 
     def __solve__current(self, Ox2: float, fmm_ce: float):
@@ -60,7 +61,7 @@ class Solver:
             self.__log(Ox_name, Ox, "Wb")
             self.__log(Ox2_name, Ox2, "Wb")
 
-        return (Ox, Ox2)
+        return ((Ox, Ox_name), ((Ox2, Ox2_name)))
 
     def __find_missing_current(self, Hx2: float, fmm_ce: float) -> float:
         N = self.__circuit.N1
@@ -76,7 +77,7 @@ class Solver:
         
         if(self.__logging):
             self.__log(name, I, "A")
-        return I
+        return (I, name)
 
 
     def __find_Hx(self, fmm_ce: float) -> float:
@@ -99,8 +100,13 @@ class Solver:
 
         return H
     
-    def __find_flux_vacuum(self, flux: float, w: float, d:float, lg: float, name: str, percent_inc: float = None):
-        B = magutils.B(flux, w, d, lg, percent_inc)
+    def __find_flux_vacuum(self, flux: float, name: str, percent_inc: float = None):
+        
+        SC = self.__circuit.SC
+        A = self.__circuit.A
+        lg = self.__circuit.LE
+
+        B = magutils.B_vacuum(flux, SC, A, lg, percent_inc)
         if(self.__logging):
             self.__log(name, B, "Teslas")
         return B
@@ -154,6 +160,8 @@ if __name__ == "__main__":
         SF=0.97,
         a=0.0123,
         b=0.00797,
+        A=5e-2,
+        fringe=None,
         solve_for_I2=False
     )
 
@@ -173,9 +181,11 @@ if __name__ == "__main__":
         SF=1,
         a=0.03,
         b=0.02,
-        solve_for_I2=True
+        solve_for_I2=True,
+        fringe=10,
+        A=5e-2
     )
 
 
     solver = Solver(circuit2, logging=True)
-    solver.solve()
+    print(solver.solve())
