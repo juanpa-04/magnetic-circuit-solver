@@ -76,7 +76,7 @@ class TUI:
 
         choice = multiple_choice(choice_fringe, choice_msg)
         if choice == 1:
-            return prompt("Ingresar aumento (%)$ ", NumberValidator((None, None)))
+            return prompt("Ingresar aumento (%)$ ", NumberValidator((0, 100)))
         elif choice == 2:
             return None
         else:
