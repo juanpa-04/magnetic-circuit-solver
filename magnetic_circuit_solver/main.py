@@ -1,3 +1,9 @@
+"""
+Juan Pablo Carvajal Abrahams
+B91672
+Tarea Programada
+IE0315
+"""
 from prompt_utils import prompt
 from prompt_utils import multiple_choice
 from number_validator import NumberValidator

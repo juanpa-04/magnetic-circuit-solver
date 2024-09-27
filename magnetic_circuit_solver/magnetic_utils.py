@@ -1,3 +1,6 @@
+"""
+Funciones para resolver B, H y calculo de la curva BH
+"""
 import constants as cons
 
 def H(B_field: float, a: float, b: float) -> float:
@@ -25,8 +28,7 @@ def B_vacuum(flux: float, SC: float, A:float, lg: float, percent_inc: float = No
     """Calcula B tomando en cuenta el area efectiva"""
 
     try:
-        w = SC/A
-
+        w = SC/A # A es el grosor
         effective_area = (w + lg)*(A + lg)
         if percent_inc != None :
             effective_area = (w*A*(1 + percent_inc/100))
@@ -37,7 +39,7 @@ def B_vacuum(flux: float, SC: float, A:float, lg: float, percent_inc: float = No
 
 
 def B(flux: float, cross_section: float, sf: float = 1) -> float:
-    """Calcula B"""
+    """Calcula B con el factor de apilado"""
     B = flux/(cross_section*sf)
     return B
 
@@ -48,6 +50,7 @@ def approx_froelich_constants(hb25: tuple, hb90: tuple) -> tuple:
     h25, b25 = hb25
     h90, b90 = hb90
 
+    # Resuelve las ecuaciones simultaneas de los dos puntos
     try:
         x = (b25*h25)/(h90*b90)
 

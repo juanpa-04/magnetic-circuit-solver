@@ -1,4 +1,5 @@
 class NumberValidator:
+    """Clase para validar números y establecer rangos minimos y maximos"""
     def __init__(self, range:tuple) -> None:
         self.__range = range
 

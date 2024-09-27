@@ -5,38 +5,38 @@ class Solver:
 
     def __init__(self, circuit: Circuit, logging: bool) -> None:
         self.__circuit = circuit
-        self.__logging = logging
-        self.__log_line_number = 1
+        self.__logging = logging # Imprime todos los pasos intermedios si es True
+        self.__log_line_number = 1 
 
     def solve(self) -> float:
         
         # Calcular La Fmm de la columna central
-        Bc = self.__find_flux(self.__circuit.OE, self.__circuit.SC, self.__circuit.SF, "Bc")
-        Hc = self.__find_mag_intensity(Bc,"Hc") # Columa central
-        Be = self.__find_flux_vacuum(self.__circuit.OE, "Be", self.__circuit.fringe)
-        He = self.__find_mag_intensity(Be, name="He", vacuum=True) # Entrehierro
-        Fmm_ce = self.__find_fmm_column(Hc, He, "Fce")
+        Bc = self.__find_flux(self.__circuit.OE, self.__circuit.SC, self.__circuit.SF, "Bc") # Densidad de flujo de la columna
+        Hc = self.__find_mag_intensity(Bc,"Hc") # Intensidad magnetica de la columna
+        Be = self.__find_flux_vacuum(self.__circuit.OE, "Be", self.__circuit.fringe) # B del entrehierro
+        He = self.__find_mag_intensity(Be, name="He", vacuum=True) # H del entrehierro
+        Fmm_ce = self.__find_fmm_column(Hc, He, "Fce") # FMM que "cae" en la columna central y entrehierro
 
         # Calcular Hx y Bx
-        Hx = self.__find_Hx(Fmm_ce)
+        Hx = self.__find_Hx(Fmm_ce) # Calcula el H correspondiente (de la rama 1 o 2)
 
         bx_name = "B1" if self.__circuit.solve_for_I2 else "B2"
-        Bx = self.__find_flux_curve(Hx, bx_name)
+        Bx = self.__find_flux_curve(Hx, bx_name) # Calcula el B correspondiente (de la rama 1 o 2)
 
         # Calcular flujos en las ramas
-        Oxtuple, Ox2tuple = self.__calc_branch_flux(Bx)
-        Ox, Ox_name = Oxtuple
-        Ox2, Ox2_name = Ox2tuple
+        Oxtuple, Ox2tuple = self.__calc_branch_flux(Bx) # Calcula los flujos O1 y O2
+
+        Ox2, _ = Ox2tuple
 
         # Calcular Corriente
-        Ituple = self.__solve__current(Ox2, Fmm_ce)
+        Ituple = self.__solve__current(Ox2, Fmm_ce) # Resuelve para la corriente faltante
 
 
-        return (Oxtuple, Ox2tuple, Ituple)
+        return (Oxtuple, Ox2tuple, Ituple) # Respuesta
     
 
     def __solve__current(self, Ox2: float, fmm_ce: float):
-        
+
         Bx_name = "B1"
         Hx_name = "H1"
 
@@ -145,6 +145,7 @@ class Solver:
         
 
 if __name__ == "__main__":
+    """Ejemplos de funcionalidad"""
     circuit = Circuit( 
         N1=100,
         N2=50,
