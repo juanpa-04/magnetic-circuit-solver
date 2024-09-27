@@ -8,3 +8,11 @@ Se usa el siguiente comando para correr el programa desde el directorio *root* d
 ```bash
 python magnetic_circuit_solver/main.py
 ```
+
+# Convención de corrientes
+
+Las corrientes que fluyen hacia la bobina (como en el ejemplo del enunciado) son positivas.
+
+# Notas
+
+El parámetro *A* del circuito corresponde al ancho o grosor y se usa para calcular el área efectiva del entrehierro.
